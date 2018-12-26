@@ -3,7 +3,7 @@ class Point {
     int x, y;
     int lastColor;
     Point (int x, int y, Counter counter) {this.x = x; this.y = y; this.counter = counter; lastColor = 99; map[x][y] = 3;}
-    Point (int x, int y, Counter counter, State state) {this.x = x; this.y = y; this.counter = counter; lastColor = 99;}
+    Point (int x, int y, Counter counter, boolean computer) {this.x = x; this.y = y; this.counter = counter; lastColor = 99;}
     void selfDestroy() {map[x][y] = lastColor;}
 
     void markPoint() {

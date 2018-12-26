@@ -1,21 +1,48 @@
 void computreTurn() {
-    initialState = new State(playerCounter, computerCounter);
-    // Generating AlphaBeta to execute negaMax
-    createGameTree(initialState, 2); //Create Tree  (ex: 2 means tree level 3)
-    // checkTree(initialState);  // testing if computer can perform pushes or points
-    initialState = negaMax(initialState, false, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).state;
-    computerCounter = copyList(initialState.computerCounters); playerCounter = copyList(initialState.playerCounters);
-    println("******************************");
+    boolean priorityPushOrPoint = false; // will be used to determine if we have a priority push or point
+    // check for possible pushes or points first 
+    ArrayList<Point> possiblePoints = new ArrayList<Point>();
+    ArrayList<MapCoordinates> possiblePushes = new ArrayList<MapCoordinates>();
+    // checking for possible pushes and points 
+    checkForPushesAndPointsComputer(possiblePushes, possiblePoints);
+    // println("possible pushes/points", possiblePushes.size(), possiblePoints.size());
+    if (possiblePoints.size() > 0) {
+        priorityPushOrPoint = true;
+        executePoint(possiblePoints.get(0));
+    }
+
+    if (!priorityPushOrPoint) {
+        initialState = new State(playerCounter, computerCounter);
+        // Generating AlphaBeta to execute negaMax
+        createGameTree(initialState, 2); //Create Tree  (ex: 2 means tree level 3)
+        initialState = negaMax(initialState, false, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).state;
+        computerCounter = copyList(initialState.computerCounters);
+    }
     playerTurn = 'p';
 }
 
-// to check if computer is doing points
-void checkTree(State state) {
-    if (state.playerCounters.size() < 14) println("-------------ok---------------");
-    if (state.computerCounters.size() < 14) println("-------------ok---------------");
-    if (state.childStates.size() > 0) 
-        for (State s : state.childStates) 
-            checkTree(s);
+void checkForPushesAndPointsComputer(ArrayList<MapCoordinates> possiblePushes, ArrayList<Point> possiblePoints) {
+    Counter targetedCounter;
+    for (Counter counter : computerCounter) {
+        targetedCounter = searchCounter(counter.x + 1, counter.y - 1);
+        if (targetedCounter != null && targetedCounter.player != 'c') 
+            tryToAssignPushOrPointForComputer(targetedCounter, counter, possiblePushes, possiblePoints);
+        targetedCounter = searchCounter(counter.x - 1, counter.y + 1);
+        if (targetedCounter != null && targetedCounter.player != 'c') 
+            tryToAssignPushOrPointForComputer(targetedCounter, counter, possiblePushes, possiblePoints);
+        targetedCounter = searchCounter(counter.x + 1, counter.y + 1);
+        if (targetedCounter != null && targetedCounter.player != 'c') 
+            tryToAssignPushOrPointForComputer(targetedCounter, counter, possiblePushes, possiblePoints);
+        targetedCounter = searchCounter(counter.x - 1, counter.y - 1);
+        if (targetedCounter != null && targetedCounter.player != 'c') 
+            tryToAssignPushOrPointForComputer(targetedCounter, counter, possiblePushes, possiblePoints);
+        targetedCounter = searchCounter(counter.x, counter.y + 2);
+        if (targetedCounter != null && targetedCounter.player != 'c') 
+            tryToAssignPushOrPointForComputer(targetedCounter, counter, possiblePushes, possiblePoints);
+        targetedCounter = searchCounter(counter.x, counter.y - 2);
+        if (targetedCounter != null && targetedCounter.player != 'c') 
+            tryToAssignPushOrPointForComputer(targetedCounter, counter, possiblePushes, possiblePoints);
+    }
 }
 
 void addAllPossibleWaysToTree(State state, Counter counter) {
@@ -71,42 +98,47 @@ public Values negaMax(State state, boolean isMaximizingPlayer, Double alpha, Dou
     }
 }
 
+// check if we have a counter or not
 boolean checkWayState(int i, int j, State state, Counter counter) {
   try {
-    Counter possibleCounter = searchCounterState(i, j, state);
-    if (possibleCounter != null) {
-      if (possibleCounter.player != counter.player) checkPushState(i, j, state, counter);
-      return false;
-    } else return ( (map[i][j] != 99) && (map[i][j] != 0) );
-  } catch (Exception e) {
-    if (i == 5 && j == -1) return false;
-    else println(e);
-    return false;
-  }
+    if ((searchCounterState(i, j, state) == null) && (map[i][j] != 99) && (map[i][j] != 0)) return true;
+    else return false;
+  } catch (Exception e) { return false; }
 }
-// (i, j) is the counter to be pushed/removed
-// State is the current state before applying changes
-// Counter is the counter that can('t) push/remove targeted counter
-void checkPushState(int i, int j, State state, Counter counter) {
-    int depX = counter.x - i, depY = counter.y - j;
-    Counter selectedCounter; // selectedCounter will be used to count enemyCounters and teammateCounters
+
+// if this method is called it means we have a possible push or point so 
+// we need to distinguish if it's a fair push/point first 
+// then we'll add it to the array if that's true 
+void tryToAssignPushOrPointForComputer(Counter targetedCounter, Counter counter, ArrayList<MapCoordinates> possiblePushes, ArrayList<Point> possiblePoints) {
+    int depX = counter.x - targetedCounter.x, depY = counter.y - targetedCounter.y, mapX, mapY;
+    // mapX and mapY will be used to determine if the possible push is a point or just a simple push
+    Counter selectedCounter; // selected counter will be used to check teammates and enemies number of counter
     int teammatesNumber = 1, enemiesNumber = 1;
-    // First we need to make sure we have at least 2 teammates 
-    selectedCounter = searchCounterState(counter.x + depX, counter.y + depY, state);
+    // first we need to make sure that we have at least 2 teammates
+    selectedCounter = searchCounter(counter.x + depX, counter.y + depY);
     if (selectedCounter != null && selectedCounter.player == counter.player) {
         teammatesNumber++;
-        selectedCounter = searchCounterState(selectedCounter.x + depX, selectedCounter.y + depY, state);
+        selectedCounter = searchCounter(selectedCounter.x + depX, selectedCounter.y + depY);
         if (selectedCounter != null && selectedCounter.player == counter.player) teammatesNumber++;
-        // The second thing we need to do is check if we can push right now
-        // since we have 2 or 3 counters that can push in (depX, depY) direction
-        selectedCounter = searchCounterState(i - depX, j - depY, state);
-        if (selectedCounter != null && selectedCounter.player != counter.player) {
+        // after checking about teammates number 
+        // we need to see if we can push with 2/3 counters in (depX, depY) direction
+        mapX = targetedCounter.x - depX; mapY = targetedCounter.y - depY;
+        selectedCounter = searchCounter(targetedCounter.x - depX, targetedCounter.y - depY);
+        if (selectedCounter != null && selectedCounter.player == targetedCounter.player) {
             enemiesNumber++;
-            selectedCounter = searchCounterState(selectedCounter.x - depX, selectedCounter.y - depY, state);
-            if (selectedCounter != null) enemiesNumber++; // it doesn't matter if it's enemyCounter 
-            // or not because we can't push 3 Counters in any case
-        }
-        //if (teammatesNumber > enemiesNumber) 
-        //    state.childStates.add(new State(state, i, j, depX, depY, counter, enemiesNumber, teammatesNumber));
+            mapX = selectedCounter.x - depX; mapY = selectedCounter.y - depY;
+            selectedCounter = searchCounter(selectedCounter.x - depX, selectedCounter.y - depY);
+            if (selectedCounter != null) enemiesNumber++; // it doesn't matter if it's an 
+            // enemie counter or not we can't push anyways
+        } else if (selectedCounter != null) enemiesNumber += 3;
+        if (teammatesNumber > enemiesNumber) // it means we have a possible push or point 
+            if (mapX == 5 && mapY == -1) //it means we have a special case of point so we'll create one
+                possiblePoints.add(new Point(5, 0, searchCounter(5, 1), true)); // point created
+            else if (mapX == 5 && mapY == 19)   // another special case of point we'll need to add it
+                possiblePoints.add(new Point(5, 18, searchCounter(5, 17), true));
+            else if (map[mapX][mapY] == 99) // classic possible point
+                possiblePoints.add(new Point(mapX, mapY, searchCounter(mapX + depX, mapY + depY), true)); 
+            else possiblePushes.add(new MapCoordinates(mapX, mapY, searchCounter(mapX + depX, mapY + depY), true)); 
+            // else we'll have a push
     }
 }
