@@ -85,7 +85,7 @@ void executePoint(Point point) {
         i--;
     }
     i = 3;
-    while (i > 0) { 
+    while (i > 0 && counter != null) { 
         targetedCounters.add(counter); 
         counter = searchCounter(counter.x - depX, counter.y - depY);
         i--; 
