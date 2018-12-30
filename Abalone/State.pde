@@ -85,7 +85,7 @@ void executePoint(Point point) {
         i--;
     }
     i = 3;
-    while (i > 0 && counter != null) { 
+    while (i > 0 && counter != null && counter.player != 'c') { 
         targetedCounters.add(counter); 
         counter = searchCounter(counter.x - depX, counter.y - depY);
         i--; 
@@ -96,4 +96,50 @@ void executePoint(Point point) {
         targetedCounters.remove(0);
     }
     point.markPoint();
+}
+
+boolean checkForPriorityPush (ArrayList<MapCoordinates> possiblePushes) {
+    State initialState, finishedState;
+    Counter targetedCounter;
+    ArrayList<Counter> teammatesCounters = new ArrayList<Counter>();
+    ArrayList<Counter> enemyCounters = new ArrayList<Counter>();
+    int depX, depY;
+        // the idea is to create two states the first one is before executing the push 
+        // and the second one is after, then we compare both if eval(initstate) < eval(afterPushState)
+        // then we execute the push and return true to not evaluate the tree after
+    for (MapCoordinates mapCoordinates : possiblePushes) {
+        initialState = new State(playerCounter, computerCounter);
+        finishedState = new State(playerCounter, computerCounter); // create an initial state to execute move in it
+        depX = mapCoordinates.x - mapCoordinates.counter.x;
+        depY = mapCoordinates.y - mapCoordinates.counter.y;
+        // enemies counters
+        targetedCounter = searchCounterState(mapCoordinates.counter.x, mapCoordinates.counter.y ,finishedState);
+        enemyCounters.add(targetedCounter);
+        targetedCounter = searchCounterState(targetedCounter.x + depX, targetedCounter.y + depX, finishedState);
+        if (targetedCounter != null) enemyCounters.add(targetedCounter);
+        // teammates counters
+        targetedCounter = searchCounterState(mapCoordinates.counter.x - depX, mapCoordinates.counter.y -depY , finishedState);
+        teammatesCounters.add(targetedCounter);
+        targetedCounter = searchCounterState(targetedCounter.x - depX, targetedCounter.y - depY, finishedState);
+        teammatesCounters.add(targetedCounter);
+        targetedCounter = searchCounterState(targetedCounter.x - depX, targetedCounter.y - depY, finishedState);
+        if (targetedCounter != null && targetedCounter.player == 'c') teammatesCounters.add(targetedCounter);
+        // after selecting all of them we need to move them
+        while (teammatesCounters.size() != 0) {
+            teammatesCounters.get(0).x += depX;
+            teammatesCounters.get(0).y += depY;
+            teammatesCounters.remove(0);
+        }
+        while (enemyCounters.size() != 0) {
+            enemyCounters.get(0).x += depX;
+            enemyCounters.get(0).y += depY;
+            enemyCounters.remove(0);
+        }
+        if (mpEvaluation(initialState) < mpEvaluation(finishedState)) {
+            computerCounter = copyList(finishedState.computerCounters);
+            playerCounter = copyList(finishedState.playerCounters);
+            return true;
+        }
+    }
+    return false;
 }

@@ -9,6 +9,8 @@ void computreTurn() {
     if (possiblePoints.size() > 0) {
         priorityPushOrPoint = true;
         executePoint(possiblePoints.get(0));
+    } else if (possiblePushes.size() > 0) {
+        priorityPushOrPoint = checkForPriorityPush(possiblePushes);
     }
 
     if (!priorityPushOrPoint) {
