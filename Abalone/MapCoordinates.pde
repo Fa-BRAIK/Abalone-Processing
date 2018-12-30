@@ -5,7 +5,7 @@ class MapCoordinates {
   ArrayList<MapCoordinates> possibleWays = new ArrayList<MapCoordinates>();
   MapCoordinates (int x, int y, Counter counter) { this.x = x; this.y = y; this.lastValue = map[x][y]; this.counter = counter; map[x][y] = 2; }
   
-  MapCoordinates (int x, int y, Counter counter, State state) {this.x = x; this.y = y; this.counter = counter; this.lastValue = 99;}
+  MapCoordinates (int x, int y, Counter counter, boolean computer) {this.x = x; this.y = y; this.counter = counter; this.lastValue = 99;}
 
   void removeMapCoordinates() { map[x][y] = lastValue; }
 

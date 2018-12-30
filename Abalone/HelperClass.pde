@@ -138,5 +138,5 @@ void initGame() {
   playerCounter.add(new Counter(8, 6, 'p')); playerCounter.add(new Counter(8, 8, 'p'));
   playerCounter.add(new Counter(8, 10, 'p')); playerCounter.add(new Counter(8, 12, 'p')); playerCounter.add(new Counter(8, 14, 'p'));
   playerCounter.add(new Counter(9, 13, 'p')); playerCounter.add(new Counter(9, 11, 'p')); playerCounter.add(new Counter(9, 9, 'p'));
-  playerCounter.add(new Counter(9, 7, 'p')); playerCounter.add(new Counter(9, 5, 'p')); 
+  playerCounter.add(new Counter(9, 7, 'p')); playerCounter.add(new Counter(9, 5, 'p'));
 }
