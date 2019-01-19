@@ -48,8 +48,9 @@ void draw() {
 }
 
 void mouseClicked() {
+  int diffX = 20, diffY = 20;
   if ((gameMode.equals("PvsP")) || (playerTurn == 'p')) 
-  if (!menu) checkWhereMouseIsPressed(mouseY/ (customHeight / stepY), mouseX/ (customWidth / stepX));
+  if (!menu) checkWhereMouseIsPressed((mouseY + diffY)/ (customHeight / stepY), (mouseX + diffX)/ (customWidth / stepX));
   else clickMenu();
   if (!(gameMode.equals("PvsP")) && (playerTurn != 'p')) computreTurn();
 }
