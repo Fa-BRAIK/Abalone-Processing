@@ -77,19 +77,22 @@ void executePoint(Point point) {
     if (point.x == 5 && point.y == -1) { depX = 0; depY = -2; }
     else if (point.x == 5 && point.y == 18) { depX = 0; depY = 2; }
     else { depX = point.x - point.counter.x; depY = point.y - point.counter.y; }
-    int i = 2; Counter counter = point.counter;
-    // moving enemiesCounter
-    while (i > 0 && counter.player == point.counter.player) { 
-        targetedCounters.add(counter);
-        counter = searchCounter(counter.x - depX, counter.y - depY);
-        i--;
-    }
-    i = 3;
+    i = 2; Counter counter = point.counter;
     while (i > 0 && counter != null && counter.player != 'c') { 
         targetedCounters.add(counter); 
         counter = searchCounter(counter.x - depX, counter.y - depY);
-        i--; 
+        i--;
     }
+
+    int i = 3;
+    // moving enemiesCounter
+    while (i > 0 && counter.player == 'c') { 
+        targetedCounters.add(counter);
+        counter = searchCounter(counter.x - depX, counter.y - depY);
+        i--;
+        println(i);
+    }
+
     while (targetedCounters.size() != 0) {
         targetedCounters.get(0).x += depX;
         targetedCounters.get(0).y += depY;
