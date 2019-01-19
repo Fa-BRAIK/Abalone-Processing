@@ -2,7 +2,7 @@ PFont f;
 PImage backgroundImage;
 int i, j, h, w;
 float r, g, b;
-int customHeight = 550, customWidth = 950, boxSize = 50, ellipseSize = 38, stepX, stepY, playerScore = 0, computerScore = 0;
+int customHeight = 550, customWidth = 950, boxSize = 50, ellipseSize = 40, stepX, stepY, playerScore = 0, computerScore = 0;
 char playerTurn = 'p';
 boolean menu = true, returnToGame = false;
 int [][]map={{99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99},
@@ -48,16 +48,14 @@ void draw() {
 }
 
 void mouseClicked() {
-  // if (!menu) println(mpEvolution(mouseY/ (customHeight / stepY), mouseX/ (customWidth / stepX)));
+  int diffX = 20, diffY = 20;
   if ((gameMode.equals("PvsP")) || (playerTurn == 'p')) 
-  if (!menu) checkWhereMouseIsPressed(mouseY/ (customHeight / stepY), mouseX/ (customWidth / stepX));
+  if (!menu) checkWhereMouseIsPressed((mouseY + diffY)/ (customHeight / stepY), (mouseX + diffX)/ (customWidth / stepX));
   else clickMenu();
   if (!(gameMode.equals("PvsP")) && (playerTurn != 'p')) computreTurn();
 }
 
-void keyPressed() {
-  if (!menu && (key == 'm' || key == 'M')) menu = true; 
-}
+void keyPressed() { if (!menu && (key == 'm' || key == 'M')) menu = true; }
 
 void checkWhereMouseIsPressed(int i, int j) {
   Counter counter = searchCounter(i, j);
