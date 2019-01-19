@@ -8,8 +8,8 @@ void  drawBoard() {
       switch (map[i][j]) {
         case 0 : noFill(); break;	
         case 1 : fill(200); break;
-        case 2 : fill(206, 177, 128); break;
-        case 3 : fill(157, 96, 121); break;
+        case 2 : fill(66, 229, 104); break;
+        case 3 : fill(199, 60, 230); break;
         case 99: noFill(); break;
       }
       pushMatrix();
@@ -45,7 +45,7 @@ void drawLignes() {
   line(705, 405, 355, 55); line(655, 455, 255, 55); line(555, 455, 205, 105);
   line(455, 455, 155, 155); line(355, 455, 105, 205); line(250, 455, 55, 255);
   
-  strokeWeight(20); stroke(70);
+  strokeWeight(20); stroke(167,169,182);
   
   // between out and in
   line(10, 255, 55, 255); line(855, 255, 900, 255);
@@ -61,26 +61,30 @@ void drawLignes() {
 void scoreboard() {
   String name;
   textFont(f,28); strokeWeight(7); stroke(200); 
-  fill(70); rect(55, 530, 300, 100, 25, 0, 0, 25); fill(200);
+  fill(220); rect(55, 530, 300, 100, 25, 0, 0, 25); fill(245, 54, 54);
   if (gameMode.equals("PvsP")) text("Player 1 Score : " + playerScore, 205, 580);
   else text("Player Score : " + playerScore, 205, 580);
-  fill(70); rect(555, 530, 300, 100, 0, 25, 25, 0); fill(200);
+  fill(220); rect(555, 530, 300, 100, 0, 25, 25, 0); fill(54, 95, 245);
   if (gameMode.equals("PvsP")) text("Player 2 Score : " + computerScore, 705, 580);
   else text("Computer Score : " + computerScore, 705, 580);
-  color textColor = (playerTurn == 'p')? color(199, 0, 57) : color(41, 125, 125);
+  color fillColor = (playerTurn == 'p')? color(255, 92, 92) : color (92, 127, 255);
+  color strokeColor = (playerTurn == 'p')? color(245, 54, 54) : color(54, 95, 245);
   if (gameMode.equals("PvsP")) name = (playerTurn == 'p')? "Player 1" : "Player 2";
   else name = (playerTurn == 'p')? "Player" : "Computer";
-  fill(200); rect(355, 530, 200, 100); noStroke();
-  fill(textColor); text(name + " Turn", 455, 580); 
+  fill(220); rect(355, 530, 200, 100);
+  fill(fillColor);
+  strokeWeight(2); stroke(strokeColor);
+  ellipse(455, 580, ellipseSize, ellipseSize);
+  noStroke();
 }
 
 void mainMenu() {
   image(backgroundImage, 0, 0, 1000, 750);
   textFont(f,38); stroke(240); strokeWeight(1);
-  fill(120, 120, 120, 150); rect(155, 60, 620, 100, 25, 25, 25, 25);
-  fill(240); text("New Game / Player Vs Player", 470, 100);
-  fill(120, 120, 120, 150); rect(155, 210, 620, 100, 25, 25, 25, 25);
-  fill(240); text("New Game / Player Vs Computer", 475, 250);
+  fill(167,169,182); rect(155, 60, 620, 100, 25, 25, 25, 25);
+  fill(247); text("Player Vs Player", 470, 100);
+  fill(167,169,182); rect(155, 210, 620, 100, 25, 25, 25, 25);
+  fill(247); text("Player Vs Computer", 475, 250);
   color rectColor;
   if (gameMode.equals("PvsC")) rectColor = (playerTurn == 'p') ? color(199, 0, 57) : color(41, 125, 125);
   else rectColor = (playerTurn == 'c') ? color(199, 0, 57) : color(41, 125, 125);
@@ -106,7 +110,7 @@ void mainMenu() {
   }
   textFont(f,38); stroke(240); strokeWeight(1);
   if (returnToGame) {
-    fill(120, 120, 120, 150); rect(155, 510, 620, 100, 25, 25, 25, 25);
+    fill(167,169,182); rect(155, 510, 620, 100, 25, 25, 25, 25);
     fill(255); text("Resume Game", 455, 550);
   }
 }

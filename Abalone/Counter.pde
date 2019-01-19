@@ -10,14 +10,14 @@ class Counter {
     this.y = y;
     this.player = player;
     if (player == 'c') {
-      c = color (41, 125, 125);
-      cSelected = color (21, 66, 66);
-      strokeColor = color(38, 83, 104);
+      c = color (92, 127, 255);
+      cSelected = color (14, 23, 188);
+      strokeColor = color(54, 95, 245);
     }
     else {
-      c = color(199, 0, 57);
+      c = color(255, 92, 92);
       cSelected = color(130, 0, 36);
-      strokeColor = color(86, 13, 13);
+      strokeColor = color(245, 54, 54);
     }
   }
 

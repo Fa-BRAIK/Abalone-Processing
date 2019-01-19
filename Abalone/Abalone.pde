@@ -2,7 +2,7 @@ PFont f;
 PImage backgroundImage;
 int i, j, h, w;
 float r, g, b;
-int customHeight = 550, customWidth = 950, boxSize = 50, ellipseSize = 40, stepX, stepY, playerScore = 0, computerScore = 0;
+int customHeight = 550, customWidth = 950, boxSize = 50, ellipseSize = 38, stepX, stepY, playerScore = 0, computerScore = 0;
 char playerTurn = 'p';
 boolean menu = true, returnToGame = false;
 int [][]map={{99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99},
@@ -27,13 +27,13 @@ State initialState;
 String gameMode = "";
 
 void setup() {
-  backgroundImage = loadImage("background.jpg");
+  backgroundImage = loadImage("background.png");
   size(911, 650);
   h = customHeight;
   w = customWidth;
   stepX = customWidth / boxSize;
   stepY = customHeight / boxSize;
-  f = createFont("Serif.plain", 16, true);
+  f = createFont("NovaRound.ttf", 16, true);
   strokeCap(ROUND);
   strokeJoin(ROUND);
   ellipseMode(CENTER);
@@ -48,14 +48,15 @@ void draw() {
 }
 
 void mouseClicked() {
-  int diffX = 20, diffY = 20;
   if ((gameMode.equals("PvsP")) || (playerTurn == 'p')) 
-  if (!menu) checkWhereMouseIsPressed((mouseY + diffY)/ (customHeight / stepY), (mouseX + diffX)/ (customWidth / stepX));
+  if (!menu) checkWhereMouseIsPressed(mouseY/ (customHeight / stepY), mouseX/ (customWidth / stepX));
   else clickMenu();
   if (!(gameMode.equals("PvsP")) && (playerTurn != 'p')) computreTurn();
 }
 
-void keyPressed() { if (!menu && (key == 'm' || key == 'M')) menu = true; }
+void keyPressed() {
+  if (!menu && (key == 'm' || key == 'M')) menu = true; 
+}
 
 void checkWhereMouseIsPressed(int i, int j) {
   Counter counter = searchCounter(i, j);
